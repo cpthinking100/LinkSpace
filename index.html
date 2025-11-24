@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LinkSpace</title> <!-- Default Title -->
+    <title>LinkSpace</title>
 
-    <!-- Favicon Links (as requested previously) -->
+    <!-- Favicon Links (Ensure these files are in your GitHub repo root directory) -->
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
@@ -13,16 +13,21 @@
 
     <style>
         /* CSS for the tabbed interface */
-        body { font-family: sans-serif; }
-        .tab-menu { overflow: hidden; border: 1px solid #ccc; background-color: #f1f1f1; }
-        .tab-menu button { background-color: inherit; float: left; border: none; outline: none; cursor: pointer; padding: 14px 16px; transition: 0.3s; }
+        body { font-family: sans-serif; margin: 0; padding: 0; }
+        .tab-menu { overflow: hidden; border-bottom: 1px solid #ccc; background-color: #f1f1f1; }
+        .tab-menu button { background-color: inherit; float: left; border: none; outline: none; cursor: pointer; padding: 14px 16px; transition: 0.3s; font-size: 16px; }
         .tab-menu button:hover { background-color: #ddd; }
         .tab-menu button.active { background-color: #ccc; }
-        .tab-content { display: none; padding: 20px 12px; border: 1px solid #ccc; border-top: none; }
+        .tab-content { display: none; padding: 20px 12px; border-top: none; }
         .tab-content.active { display: block; }
+        input[type="text"] { padding: 8px; width: 250px; margin-right: 10px; margin-bottom: 10px; }
+        button { padding: 8px 12px; cursor: pointer; }
+        #linksList { list-style-type: none; padding: 0; }
+        #linksList li { margin-bottom: 10px; padding: 5px; background-color: #f9f9f9; border: 1px solid #ddd; display: flex; justify-content: space-between; align-items: center; }
+        #linksList li button { background-color: red; color: white; border: none; padding: 5px 10px; font-size: 12px; }
     </style>
 </head>
-<body>
+<body onload="loadLinks()">
 
     <!-- Tab Navigation Menu -->
     <div class="tab-menu">
@@ -33,73 +38,130 @@
 
     <!-- Tab Content Sections -->
 
-    <!-- Tab 1: Make/Edit Links/Buttons Tab -->
+    <!-- Tab 1: Make/Edit Links/Buttons Tab (Now uses Local Storage) -->
     <div id="MakeEdit" class="tab-content active">
         <h2>Make/Edit Links/Buttons</h2>
-        <p>Use this area to manage your links. You would need a backend system (like a database or local storage) to make this functional, but here is the placeholder for the interface.</p>
-        <!-- Interactive form goes here -->
+        <p>Your links are saved in this browser's local storage.</p>
+        <form onsubmit="return false;">
+            <div>
+                <label for="linkURL">URL:</label><br>
+                <input type="text" id="linkURL" placeholder="https://example.com">
+            </div>
+            <div>
+                <label for="linkText">Button Text:</label><br>
+                <input type="text" id="linkText" placeholder="Clickable Text">
+            </div>
+            <button onclick="addLink()">Add Link</button>
+        </form>
     </div>
 
-    <!-- Tab 2: The Links and Buttons Tab -->
+    <!-- Tab 2: The Links and Buttons Tab (Dynamically Populated) -->
     <div id="ViewLinks" class="tab-content">
         <h2>The Links and Buttons</h2>
-        <p>This section displays the list of links you have created.</p>
-        <ul>
-            <li><a href="#">Example Link 1</a></li>
-            <li><a href="#">Example Link 2</a></li>
+        <ul id="linksList">
+            <!-- Links will be dynamically added here by JavaScript -->
         </ul>
     </div>
 
     <!-- Tab 3: The Disguise Tab -->
     <div id="Disguise" class="tab-content">
         <h2>The Disguise Tab ("LinkSpace" Editor)</h2>
-        <p>Here you can change the website's title and favicon.</p>
+        <p>Here you can change the website's title dynamically within your current browser session.</p>
         
-        <!-- Feature 1: Change Title -->
         <div>
             <label for="siteTitleInput">Website Title:</label>
             <input type="text" id="siteTitleInput" placeholder="Enter new site title">
             <button onclick="changeTitle()">Change Title</button>
         </div>
         
-        <!-- Feature 2: Change Favicon (Requires more advanced implementation/file upload capabilities) -->
-        <p>Changing the favicon dynamically requires more complex setup and file management (as discussed in the previous response). The links in the `head` section point to specific files on your server.</p>
+        <p style="margin-top: 20px;">
+            **Note on Favicons:** The favicons are set in the `&lt;head&gt;` section to specific files (`/favicon-*.png`) on your server/GitHub repository.
+        </p>
     </div>
 
     <script>
-        // JavaScript for Tab Functionality and Disguise Tab Features
+        // JavaScript for Tab Functionality, Disguise Features, and Local Storage Links
+
+        let linksArray = JSON.parse(localStorage.getItem('mySiteLinks')) || [];
 
         function openTab(evt, tabName) {
-            // Hide all elements with class="tab-content"
             var i, tabcontent, tablinks;
             tabcontent = document.getElementsByClassName("tab-content");
             for (i = 0; i < tabcontent.length; i++) {
                 tabcontent[i].style.display = "none";
             }
-
-            // Remove the "active" class from all buttons
             tablinks = document.getElementsByClassName("tablinks");
             for (i = 0; i < tablinks.length; i++) {
                 tablinks[i].className = tablinks[i].className.replace(" active", "");
             }
-
-            // Show the current tab, and add an "active" class to the button that opened the tab
             document.getElementById(tabName).style.display = "block";
             evt.currentTarget.className += " active";
+            
+            // Refresh the links list when opening the view tab
+            if (tabName === 'ViewLinks') {
+                displayLinks();
+            }
         }
 
-        // JavaScript function for the Disguise tab (Change Title)
+        // Function for the Disguise tab (Change Title)
         function changeTitle() {
             const newTitle = document.getElementById('siteTitleInput').value;
             if (newTitle) {
-                document.title = newTitle; // Update the browser tab title
+                document.title = newTitle;
                 alert("Website title changed to: " + newTitle);
             } else {
                 alert("Please enter a title.");
             }
         }
 
-        // Open the first tab by default on page load (handled by initial 'active' classes)
+        // Functions for the Make/Edit Links tab (Local Storage)
+        function saveLinks() {
+            localStorage.setItem('mySiteLinks', JSON.stringify(linksArray));
+        }
+
+        function addLink() {
+            const urlInput = document.getElementById('linkURL');
+            const textInput = document.getElementById('linkText');
+            const url = urlInput.value;
+            const text = textInput.value;
+
+            if (url && text) {
+                linksArray.push({ url: url, text: text });
+                saveLinks();
+                urlInput.value = '';
+                textInput.value = '';
+                alert("Link added!");
+            } else {
+                alert("Please enter both a URL and button text.");
+            }
+        }
+
+        function deleteLink(index) {
+            linksArray.splice(index, 1);
+            saveLinks();
+            displayLinks(); // Refresh the list after deletion
+        }
+
+        function displayLinks() {
+            const listElement = document.getElementById('linksList');
+            listElement.innerHTML = ''; // Clear existing list
+
+            linksArray.forEach((link, index) => {
+                const listItem = document.createElement('li');
+                listItem.innerHTML = `
+                    <a href="${link.url}" target="_blank">${link.text}</a>
+                    <button onclick="deleteLink(${index})">Delete</button>
+                `;
+                listElement.appendChild(listItem);
+            });
+        }
+
+        function loadLinks() {
+            // This runs when the body loads
+            displayLinks();
+            // Ensure first tab is active on load
+            document.getElementById('MakeEdit').style.display = 'block';
+        }
     </script>
 
 </body>
