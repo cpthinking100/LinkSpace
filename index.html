@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Set the page title -->
+    <title>LinkSpace</title>
+    
+    <!-- Favicon Links (ensure these files are present in the website's root directory) -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <!-- Simplified manifest link for shared/local environments -->
+    <link rel="manifest" href="site.webmanifest">
+
+    <style>
+        body { font-family: sans-serif; padding: 20px; }
+        #linkList { list-style-type: disc; }
+        .container { margin-top: 20px; }
+        button { margin-top: 10px; }
+        input { display: block; margin-bottom: 5px; width: 300px; }
+    </style>
+</head>
+<body>
+
+    <h1>Add Links to LinkSpace</h1>
+
+    <div class="container">
+        <label for="linkText">Link Text:</label>
+        <input type="text" id="linkText" placeholder="Enter text">
+        <label for="linkURL">Link URL:</label>
+        <input type="url" id="linkURL" placeholder="Enter URL (e.g., https://example.com)">
+        <button onclick="addLink()">Add Link</button>
+    </div>
+
+    <h2>Current Links:</h2>
+    <ul id="linkList">
+        <!-- New links will be added here by JavaScript -->
+    </ul>
+
+    <!-- Embedded JavaScript for dynamic content -->
+    <script>
+        function addLink() {
+            const textInput = document.getElementById('linkText');
+            const urlInput = document.getElementById('linkURL');
+            const linkText = textInput.value;
+            const linkURL = urlInput.value;
+
+            if (!linkText || !linkURL) {
+                alert("Please enter both text and a URL.");
+                return;
+            }
+
+            const newListElement = document.createElement('li');
+            const newAnchorElement = document.createElement('a');
+
+            newAnchorElement.textContent = linkText;
+            newAnchorElement.href = linkURL;
+            newAnchorElement.target = "_blank"; // Open in new tab
+
+            newListElement.appendChild(newAnchorElement);
+            document.getElementById('linkList').appendChild(newListElement);
+
+            textInput.value = '';
+            urlInput.value = '';
+            textInput.focus();
+        }
+    </script>
+
+</body>
+</html>
