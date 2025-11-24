@@ -3,68 +3,103 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- Set the page title -->
-    <title>LinkSpace</title>
-    
-    <!-- Favicon Links (ensure these files are present in the website's root directory) -->
+    <title>LinkSpace</title> <!-- Default Title -->
+
+    <!-- Favicon Links (as requested previously) -->
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-    <!-- Simplified manifest link for shared/local environments -->
-    <link rel="manifest" href="site.webmanifest">
+    <link rel="manifest" href="/site.webmanifest">
 
     <style>
-        body { font-family: sans-serif; padding: 20px; }
-        #linkList { list-style-type: disc; }
-        .container { margin-top: 20px; }
-        button { margin-top: 10px; }
-        input { display: block; margin-bottom: 5px; width: 300px; }
+        /* CSS for the tabbed interface */
+        body { font-family: sans-serif; }
+        .tab-menu { overflow: hidden; border: 1px solid #ccc; background-color: #f1f1f1; }
+        .tab-menu button { background-color: inherit; float: left; border: none; outline: none; cursor: pointer; padding: 14px 16px; transition: 0.3s; }
+        .tab-menu button:hover { background-color: #ddd; }
+        .tab-menu button.active { background-color: #ccc; }
+        .tab-content { display: none; padding: 20px 12px; border: 1px solid #ccc; border-top: none; }
+        .tab-content.active { display: block; }
     </style>
 </head>
 <body>
 
-    <h1>Add Links to LinkSpace</h1>
-
-    <div class="container">
-        <label for="linkText">Link Text:</label>
-        <input type="text" id="linkText" placeholder="Enter text">
-        <label for="linkURL">Link URL:</label>
-        <input type="url" id="linkURL" placeholder="Enter URL (e.g., https://example.com)">
-        <button onclick="addLink()">Add Link</button>
+    <!-- Tab Navigation Menu -->
+    <div class="tab-menu">
+        <button class="tablinks active" onclick="openTab(event, 'MakeEdit')">1. Make/Edit Links/Buttons</button>
+        <button class="tablinks" onclick="openTab(event, 'ViewLinks')">2. The Links and Buttons</button>
+        <button class="tablinks" onclick="openTab(event, 'Disguise')">3. The Disguise Tab</button>
     </div>
 
-    <h2>Current Links:</h2>
-    <ul id="linkList">
-        <!-- New links will be added here by JavaScript -->
-    </ul>
+    <!-- Tab Content Sections -->
 
-    <!-- Embedded JavaScript for dynamic content -->
+    <!-- Tab 1: Make/Edit Links/Buttons Tab -->
+    <div id="MakeEdit" class="tab-content active">
+        <h2>Make/Edit Links/Buttons</h2>
+        <p>Use this area to manage your links. You would need a backend system (like a database or local storage) to make this functional, but here is the placeholder for the interface.</p>
+        <!-- Interactive form goes here -->
+    </div>
+
+    <!-- Tab 2: The Links and Buttons Tab -->
+    <div id="ViewLinks" class="tab-content">
+        <h2>The Links and Buttons</h2>
+        <p>This section displays the list of links you have created.</p>
+        <ul>
+            <li><a href="#">Example Link 1</a></li>
+            <li><a href="#">Example Link 2</a></li>
+        </ul>
+    </div>
+
+    <!-- Tab 3: The Disguise Tab -->
+    <div id="Disguise" class="tab-content">
+        <h2>The Disguise Tab ("LinkSpace" Editor)</h2>
+        <p>Here you can change the website's title and favicon.</p>
+        
+        <!-- Feature 1: Change Title -->
+        <div>
+            <label for="siteTitleInput">Website Title:</label>
+            <input type="text" id="siteTitleInput" placeholder="Enter new site title">
+            <button onclick="changeTitle()">Change Title</button>
+        </div>
+        
+        <!-- Feature 2: Change Favicon (Requires more advanced implementation/file upload capabilities) -->
+        <p>Changing the favicon dynamically requires more complex setup and file management (as discussed in the previous response). The links in the `head` section point to specific files on your server.</p>
+    </div>
+
     <script>
-        function addLink() {
-            const textInput = document.getElementById('linkText');
-            const urlInput = document.getElementById('linkURL');
-            const linkText = textInput.value;
-            const linkURL = urlInput.value;
+        // JavaScript for Tab Functionality and Disguise Tab Features
 
-            if (!linkText || !linkURL) {
-                alert("Please enter both text and a URL.");
-                return;
+        function openTab(evt, tabName) {
+            // Hide all elements with class="tab-content"
+            var i, tabcontent, tablinks;
+            tabcontent = document.getElementsByClassName("tab-content");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
             }
 
-            const newListElement = document.createElement('li');
-            const newAnchorElement = document.createElement('a');
+            // Remove the "active" class from all buttons
+            tablinks = document.getElementsByClassName("tablinks");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace(" active", "");
+            }
 
-            newAnchorElement.textContent = linkText;
-            newAnchorElement.href = linkURL;
-            newAnchorElement.target = "_blank"; // Open in new tab
-
-            newListElement.appendChild(newAnchorElement);
-            document.getElementById('linkList').appendChild(newListElement);
-
-            textInput.value = '';
-            urlInput.value = '';
-            textInput.focus();
+            // Show the current tab, and add an "active" class to the button that opened the tab
+            document.getElementById(tabName).style.display = "block";
+            evt.currentTarget.className += " active";
         }
+
+        // JavaScript function for the Disguise tab (Change Title)
+        function changeTitle() {
+            const newTitle = document.getElementById('siteTitleInput').value;
+            if (newTitle) {
+                document.title = newTitle; // Update the browser tab title
+                alert("Website title changed to: " + newTitle);
+            } else {
+                alert("Please enter a title.");
+            }
+        }
+
+        // Open the first tab by default on page load (handled by initial 'active' classes)
     </script>
 
 </body>
